@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/miekg/dns"
 	"log"
 	"os"
@@ -16,7 +17,12 @@ func main() {
 }
 
 func run() error {
-	db, err := setupCache()
+	err := godotenv.Load(".env")
+	if err != nil {
+		return err
+	}
+
+	db, err := setupDatabase()
 	if err != nil {
 		return err
 	}
@@ -27,6 +33,8 @@ func run() error {
 	if err := dnsSrv.ListenAndServe(); err != nil {
 		log.Fatalf("Failed to set udp listener %s\n", err.Error())
 	}
+
+	//httpSrv := newHTTPServer(db)
 
 	return nil
 }

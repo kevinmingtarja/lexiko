@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  main:
+    build: .
+    ports:
+      - "53:53"
+    restart: on-failure
+    depends_on:
+      - cache
+    networks:
+      - fullstack
+    env_file:
+      - .env
+
+
+
+networks:
+  fullstack:
+    driver: bridge

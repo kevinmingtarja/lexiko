@@ -3,19 +3,24 @@ package main
 import (
 	"context"
 	"github.com/go-redis/redis/v8"
+	"os"
 )
 
-func setupCache() (*redis.Client, error) {
+func setupDatabase() (*redis.Client, error) {
 	ctx := context.Background()
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr:	  "localhost:6379",
-		Password: "", // no password set
-		DB:		  0,  // use default DB
-	})
+	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	if err != nil {
+		return nil, err
+	}
+	rdb := redis.NewClient(opt)
 
 	// Mock data
-	err := rdb.Set(ctx, "test-subdomain.", "127.0.0.1", 0).Err()
+	err = rdb.Set(ctx, "www.", "cname.vercel-dns.com.", 0).Err()
+	if err != nil {
+		return nil, err
+	}
+	err = rdb.Set(ctx, "@", "76.76.21.21", 0).Err()
 	if err != nil {
 		return nil, err
 	}
